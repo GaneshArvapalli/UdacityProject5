@@ -24,15 +24,15 @@ int main(int argc, char** argv){
   goal.target_pose.header.stamp = ros::Time::now();
 
   // Define a position and orientation for the robot to reach
-  goal.target_pose.pose.position.x = 1.0;
+  goal.target_pose.pose.position.x = -1.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
    // Send the goal position and orientation for the robot to reach
   ROS_INFO("Sending goal");
   ac.sendGoal(goal);
 
-  // Wait an 5 seconds for the results
-  ac.waitForResult(ros::Duration(5));
+  // Wait an infinite duration for the results
+  ac.waitForResult(ros::Duration());
 
   // Check if the robot reached its goal
   if(ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
@@ -41,7 +41,7 @@ int main(int argc, char** argv){
     ROS_INFO("(FAIL: Did not enter pickup zone) The base failed to move forward 1 meter for some reason");
 
   // Define a position and orientation for the robot to reach
-  goal.target_pose.pose.position.x = 2.0;
+  goal.target_pose.pose.position.x = 1.0;
   goal.target_pose.pose.orientation.w = 1.0;
 
    // Send the goal position and orientation for the robot to reach
