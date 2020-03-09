@@ -23,9 +23,9 @@ int main( int argc, char** argv )
   
   // Set our initial shape type to be a cube
   uint32_t shape = visualization_msgs::Marker::CUBE;
-
+  
   while (ros::ok())
-  {
+  {    
     visualization_msgs::Marker marker;
     // Set the frame ID and timestamp.  See the TF tutorials for information on these.
     marker.header.frame_id = "map";
@@ -57,8 +57,8 @@ int main( int argc, char** argv )
     marker.scale.z = 1.0;
 
     // Set the color -- be sure to set alpha to something non-zero!
-    marker.color.r = 0.0f;
-    marker.color.g = 1.0f;
+    marker.color.r = 1.0f;
+    marker.color.g = 0.0f;
     marker.color.b = 0.0f;
     marker.color.a = 1.0;
 
@@ -78,10 +78,12 @@ int main( int argc, char** argv )
     ROS_INFO("Object Published. Waiting for robot. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
 
     // Wait until the robot reaches the pickup
+    std::cout << "Waiting to reach pickup" << std::endl;
     while(robot_pos[0] != marker.pose.position.x && robot_pos[1] != marker.pose.position.y) {
       ros::Duration(1).sleep();
       ROS_INFO("Sleeping for 1 second. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
     }
+    
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = visualization_msgs::Marker::DELETE;
     while (marker_pub.getNumSubscribers() < 1)
@@ -99,33 +101,18 @@ int main( int argc, char** argv )
     marker_pub.publish(marker);
     ROS_INFO("Object picked up. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
     
-    marker.header.stamp = ros::Time::now();//     // Set the namespace and id for this marker.  This serves to create a uniqID
-    // Any marker sent with the same namespace and id will overwrite thed one
+    marker.header.stamp = ros::Time::now();
     marker.ns = "add_markers";
     marker.id = 1;
-
-    // Set the marker type.  Initially this is CUBE, and cycles between that and SPHERE, ARROW, and CYLINDER
-    marker.type = shape;
 
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
     marker.pose.position.x = 1.0;
-    marker.pose.position.y = 0;
-    marker.pose.position.z = 0;
-    marker.pose.orientation.x = 0.0;
-    marker.pose.orientation.y = 0.0;
-    marker.pose.orientation.z = 0.0;
-    marker.pose.orientation.w = 1.0;
-
-    // Set the scale of the marker -- 1x1x1 here means 1m on a side
-    marker.scale.x = 1.0;
-    marker.scale.y = 1.0;
-    marker.scale.z = 1.0;
 
     // Set the color -- be sure to set alpha to something non-zero!
-    marker.color.r = 1.0f;
+    marker.color.r = 0.0f;
     marker.color.g = 1.0f;
     marker.color.b = 0.0f;
     marker.color.a = 1.0;
@@ -151,7 +138,7 @@ int main( int argc, char** argv )
     marker_pub.publish(marker);
     ROS_INFO("Dropping off object. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
     
-    // Let's just leave the marker there for 5 seconds so we can see it before deletion
+    // Let's just leave the marker there for 10 seconds so we can see it before deletion
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = visualization_msgs::Marker::DELETE;
     while (marker_pub.getNumSubscribers() < 1)
@@ -163,8 +150,8 @@ int main( int argc, char** argv )
       ROS_WARN_ONCE("Please create a subscriber to the marker");
       sleep(1);
     }
-    ROS_INFO("Waiting 5 seconds before restart. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
-    ros::Duration(5).sleep();
+    ROS_INFO("Waiting 10 seconds before restart. Robot is at Position-> x: [%f], y: [%f],", robot_pos[0], robot_pos[1]);
+    ros::Duration(10).sleep();
     marker_pub.publish(marker);
     
     
