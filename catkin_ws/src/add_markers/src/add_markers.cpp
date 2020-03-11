@@ -45,7 +45,7 @@ int main(int argc, char** argv )
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
     marker.pose.position.x = -1.0;
-    marker.pose.position.y = 0;
+    marker.pose.position.y = 1.0;
     marker.pose.position.z = 0;
     marker.pose.orientation.x = 0.0;
     marker.pose.orientation.y = 0.0;
@@ -80,10 +80,11 @@ int main(int argc, char** argv )
 
     // Wait until the robot reaches the pickup
     std::cout << "Waiting to reach pickup" << std::endl;
-    while(robot_pos[0] != marker.pose.position.x || robot_pos[1] != marker.pose.position.y) {
+    while((robot_pos[0] - marker.pose.position.x  > 0.2) || (robot_pos[1] - marker.pose.position.y  > 0.2)) {
       ros::Duration(1).sleep();
       marker_pub.publish(marker);
       ROS_INFO("Sleeping for 1 second. Robot is at Position-> x: [%f], y: [%f]. Marker is at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1], marker.pose.position.x, marker.pose.position.y);
+      ros::spinOnce();
     }
     
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
@@ -111,7 +112,8 @@ int main(int argc, char** argv )
     marker.action = visualization_msgs::Marker::ADD;
 
     // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-    marker.pose.position.x = 1.0;
+    marker.pose.position.x = 0.0;
+    marker.pose.position.y = 0.0;
 
     // Set the color -- be sure to set alpha to something non-zero!
     marker.color.r = 0.0f;
@@ -123,10 +125,11 @@ int main(int argc, char** argv )
     
     // Wait until the robot reaches the dropoff
     // ROS_INFO("Waiting Boolean has value: " + (robot_pos[0] != marker.pose.position.x || robot_pos[1] != marker.pose.position.y) ? "true" : "false");
-    while(robot_pos[0] != marker.pose.position.x || robot_pos[1] != marker.pose.position.y) {
-      sleep(1);
+    while((robot_pos[0] - marker.pose.position.x  > 0.2) || (robot_pos[1] - marker.pose.position.y  > 0.2)) {
+      ros::Duration(1).sleep();
       marker_pub.publish(marker);
       ROS_INFO("Sleeping for 1 second on the way to delivery. Robot is at Position-> x: [%f], y: [%f]. Marker is at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1], marker.pose.position.x, marker.pose.position.y);
+      ros::spinOnce();
     }
 
     // Publish the marker
@@ -155,10 +158,9 @@ int main(int argc, char** argv )
       ROS_WARN_ONCE("Please create a subscriber to the marker");
       sleep(1);
     }
-    ROS_INFO("Waiting 10 seconds before restart. Robot is at Position-> x: [%f], y: [%f]. Marker is at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1], marker.pose.position.x, marker.pose.position.y);
-    marker_pub.publish(marker);
     
-    ros::spinOnce();
+
     r.sleep();
   }
+  ros::spin();
 }
