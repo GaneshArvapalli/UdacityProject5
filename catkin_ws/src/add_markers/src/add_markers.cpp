@@ -10,7 +10,7 @@ void robot_pos_callback(const nav_msgs::Odometry::ConstPtr& msg) {
     //         msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
 	robot_pos[0] = msg->pose.pose.position.x;
 	robot_pos[1] = msg->pose.pose.position.y;
-	ROS_INFO("Currently at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1]);
+	// ROS_INFO("Currently at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1]);
 }
 
 int main(int argc, char** argv )
