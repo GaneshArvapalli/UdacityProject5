@@ -10,7 +10,7 @@ void robot_pos_callback(const nav_msgs::Odometry::ConstPtr& msg) {
     //         msg->pose.pose.orientation.z, msg->pose.pose.orientation.w);
 	robot_pos[0] = msg->pose.pose.position.x;
 	robot_pos[1] = msg->pose.pose.position.y;
-	ROS_INFO("Inside callback at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1]);
+	ROS_INFO("Currently at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1]);
 }
 
 int main(int argc, char** argv )
@@ -80,7 +80,7 @@ int main(int argc, char** argv )
 
     // Wait until the robot reaches the pickup
     std::cout << "Waiting to reach pickup" << std::endl;
-    while((robot_pos[0] - marker.pose.position.x  > 0.2) || (robot_pos[1] - marker.pose.position.y  > 0.2)) {
+    while((robot_pos[0] - marker.pose.position.x  > 0.001) || (robot_pos[1] - marker.pose.position.y  > 0.001)) {
       ros::Duration(1).sleep();
       marker_pub.publish(marker);
       ROS_INFO("Sleeping for 1 second. Robot is at Position-> x: [%f], y: [%f]. Marker is at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1], marker.pose.position.x, marker.pose.position.y);
@@ -106,7 +106,7 @@ int main(int argc, char** argv )
     
     marker.header.stamp = ros::Time::now();
     marker.ns = "add_markers";
-    marker.id = 1;
+    marker.id = 0;
 
     // Set the marker action.  Options are ADD, DELETE, and new in ROS Indigo: 3 (DELETEALL)
     marker.action = visualization_msgs::Marker::ADD;
@@ -125,9 +125,9 @@ int main(int argc, char** argv )
     
     // Wait until the robot reaches the dropoff
     // ROS_INFO("Waiting Boolean has value: " + (robot_pos[0] != marker.pose.position.x || robot_pos[1] != marker.pose.position.y) ? "true" : "false");
-    while((robot_pos[0] - marker.pose.position.x  > 0.2) || (robot_pos[1] - marker.pose.position.y  > 0.2)) {
+    while((robot_pos[0] - marker.pose.position.x  > 0.001) || (robot_pos[1] - marker.pose.position.y  > 0.001)) {
       ros::Duration(1).sleep();
-      marker_pub.publish(marker);
+      // marker_pub.publish(marker);
       ROS_INFO("Sleeping for 1 second on the way to delivery. Robot is at Position-> x: [%f], y: [%f]. Marker is at Position-> x: [%f], y: [%f].", robot_pos[0], robot_pos[1], marker.pose.position.x, marker.pose.position.y);
       ros::spinOnce();
     }
@@ -158,6 +158,7 @@ int main(int argc, char** argv )
       ROS_WARN_ONCE("Please create a subscriber to the marker");
       sleep(1);
     }
+    break;
     
 
     r.sleep();
